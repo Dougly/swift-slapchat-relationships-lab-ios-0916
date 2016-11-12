@@ -12,6 +12,7 @@ import CoreData
 class DataStore {
     
     var messages:[Message] = []
+    var recipients: [Recipient] = []
     
     static let sharedInstance = DataStore()
     
@@ -65,23 +66,13 @@ class DataStore {
     // MARK: - Core Data Fetching support
     
     func fetchData() {
-        let context = persistentContainer.viewContext
-        let messagesRequest: NSFetchRequest<Message> = Message.fetchRequest()
-        
+        let managedContext = persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<Recipient>(entityName: "Recipient")
         do {
-            messages = try context.fetch(messagesRequest)
-            messages.sort(by: { (message1, message2) -> Bool in
-                let date1 = message1.createdAt! as Date
-                let date2 = message2.createdAt! as Date
-                return date1 < date2
-            })
-        } catch let error {
-            print("Error fetching data: \(error)")
-            messages = []
-        }
-        
-        if messages.count == 0 {
-            generateTestData()
+            recipients = try managedContext.fetch(fetchRequest)
+            
+        } catch {
+            
         }
     }
     

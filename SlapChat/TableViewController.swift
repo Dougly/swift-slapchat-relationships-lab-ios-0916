@@ -11,19 +11,19 @@ import UIKit
 class TableViewController: UITableViewController {
     
     var store = DataStore.sharedInstance
+    var recipient: Recipient?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        store.fetchData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         
         super.viewWillAppear(true)
-        
-        store.fetchData()
         tableView.reloadData()
     }
+    
+    
 
     // MARK: - Table view data source
     
@@ -35,16 +35,23 @@ class TableViewController: UITableViewController {
         // #warning Incomplete implementation, return the number of rows
         return store.messages.count
     }
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "basicCell", for: indexPath)
-
         let eachMessage = store.messages[indexPath.row]
-        
         cell.textLabel?.text = eachMessage.content
-
         return cell
+    }
+    
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "newMessage" {
+            let destVC = segue.destination as! AddMessageViewController
+            if let recipient = recipient {
+                destVC.recipient = recipient
+            }
+        }
     }
     
 }
